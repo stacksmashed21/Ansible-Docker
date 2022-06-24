@@ -1,0 +1,34 @@
+- hosts: awsvm
+  become: yes
+  tasks:
+          - name: Configure yum by downloading docker.repo
+            get_url:
+                    url: "https://download.docker.com/linux/centos/docker-ce.repo"
+                    dest: "/etc/yum.repos.d/"
+
+          - name: Install docker-ce
+            package:
+                    name: "docker-ce"
+                    state: present 
+
+          - name: Start docker services
+            service:
+                    name: docker
+                    state: started
+
+          - name: Install docker-py
+            pip:
+                    name: "docker-py"
+
+          - name: Pull docker ubuntu image
+            docker_image:
+                    name: ubuntu
+                    tag: "14.04"
+
+          - name: Launch docker container
+            docker_container:
+                    name: "mytest1"
+                    state: started
+                    image: "ubuntu:14.04"
+                    command: sleep infinity
+
